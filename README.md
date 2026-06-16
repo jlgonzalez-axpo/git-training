@@ -7,3 +7,5 @@ Tercer cambio desde VS Code
 
 
 ## Cambio en la rama: "feature-1"
+
+## Línea original para conflicto
