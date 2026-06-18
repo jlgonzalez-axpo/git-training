@@ -1,0 +1,56 @@
+table Dim_Customer
+	lineageTag: edb99597-6739-4c15-9098-e6a4afd8bbc1
+
+	column CustomerID
+		dataType: int64
+		formatString: 0
+		lineageTag: 7a5cf3e2-f4af-4cfa-bf9d-57b57a6ba059
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerName
+		dataType: string
+		lineageTag: d9a4479a-467b-4e5a-99fd-0f3f2c4fc914
+		summarizeBy: none
+		sourceColumn: CustomerName
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerType
+		dataType: string
+		lineageTag: 967077c7-c97f-48c5-83d9-656170186425
+		summarizeBy: none
+		sourceColumn: CustomerType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: 4256a691-fe57-4e69-af31-5e9516124301
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column RiskRating
+		dataType: string
+		lineageTag: 489b4d74-7739-4a5e-a39e-f562374ac8df
+		summarizeBy: none
+		sourceColumn: RiskRating
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Customer = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\JOSEGONZ\OneDrive - Axpo Services AG\DnA Summit 2026\Copilot_Example\csv_examples\Dim_Customer.csv"),[Delimiter=",", Columns=5, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"CustomerID", Int64.Type}, {"CustomerName", type text}, {"CustomerType", type text}, {"Country", type text}, {"RiskRating", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

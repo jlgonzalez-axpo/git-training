@@ -1,0 +1,48 @@
+table Dim_Trader
+	lineageTag: 7187b49a-ef44-4e98-a84c-1feb61b4f665
+
+	column TraderID
+		dataType: int64
+		formatString: 0
+		lineageTag: df7ffde8-70ce-4947-9368-36694e3345ef
+		summarizeBy: none
+		sourceColumn: TraderID
+
+		annotation SummarizationSetBy = Automatic
+
+	column TraderName
+		dataType: string
+		lineageTag: e206dfa4-b789-4a58-8330-69154c437f54
+		summarizeBy: none
+		sourceColumn: TraderName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Desk
+		dataType: string
+		lineageTag: 5bf8568c-4492-4b39-9108-2c5affda9f75
+		summarizeBy: none
+		sourceColumn: Desk
+
+		annotation SummarizationSetBy = Automatic
+
+	column Seniority
+		dataType: string
+		lineageTag: bed5d86c-1122-41e7-a228-7e7ee43d486c
+		summarizeBy: none
+		sourceColumn: Seniority
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Trader = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\JOSEGONZ\OneDrive - Axpo Services AG\DnA Summit 2026\Copilot_Example\csv_examples\Dim_Trader.csv"),[Delimiter=",", Columns=4, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"TraderID", Int64.Type}, {"TraderName", type text}, {"Desk", type text}, {"Seniority", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

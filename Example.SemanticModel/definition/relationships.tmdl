@@ -1,0 +1,42 @@
+relationship AutoDetected_7b38615f-70fe-42cc-a2da-dcbb4cee1c5d
+	fromColumn: Fact_Sales.CustomerID
+	toColumn: Dim_Customer.CustomerID
+
+relationship AutoDetected_2e45ee6a-3c1e-4a3e-a469-f070fa96fa1d
+	fromColumn: Fact_Sales.TraderID
+	toColumn: Dim_Trader.TraderID
+
+relationship 66525189-f525-4423-a338-32ec2882a2ff
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Calendar.Dates
+	toColumn: LocalDateTable_178fa406-d07c-45cb-ab4a-810e34e2b4d8.Date
+
+relationship 49c4dbfb-d50e-41e9-ac81-a93ea3fb2260
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Calendar.DateTime
+	toColumn: LocalDateTable_6b717e9f-c48f-4b9a-9707-e2f506b0a476.Date
+
+relationship b7d0b7ee-75a6-44bc-9fdc-5c13ef1923cc
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Data Refresh'.'Date Time'
+	toColumn: LocalDateTable_cb55b124-dffe-4d6c-b804-7e93c7cacf86.Date
+
+relationship 5c90595c-b310-47bf-9d51-1a939c1085d7
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Data Refresh'.Date
+	toColumn: LocalDateTable_fb87afd0-6552-420a-ae0a-9dd52b520eff.Date
+
+relationship 6343f576-e2bd-40b1-903e-f28d7ad4c3ab
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Fact_Sales.DeliveryDate
+	toColumn: LocalDateTable_381b918a-1ab9-444f-96cc-6bfe26b86c60.Date
+
+relationship 48fe9879-3a02-409d-ba50-6588757305dd
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Date.Date
+	toColumn: LocalDateTable_61bbb5f5-94d5-430e-b62d-42d123899e11.Date
+
+relationship 127fc6b0-3f84-7231-533c-d1ccb1543f6c
+	fromColumn: Fact_Sales.TradeDate
+	toColumn: Dim_Date.Date
+

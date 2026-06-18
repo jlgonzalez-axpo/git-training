@@ -1,0 +1,65 @@
+table Dim_Date
+	lineageTag: fb5d3238-5f90-487a-9371-9861fe35b18a
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c84b7e84-2afd-499c-8f48-7da3082cad4d
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: 48fe9879-3a02-409d-ba50-6588757305dd
+			defaultHierarchy: LocalDateTable_61bbb5f5-94d5-430e-b62d-42d123899e11.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: b8f77bb8-8fc8-4ff4-ab97-20e5bc90290b
+		summarizeBy: sum
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: int64
+		formatString: 0
+		lineageTag: bd34933a-a4c1-4956-97ce-eb6d6fdf8c48
+		summarizeBy: sum
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthName
+		dataType: string
+		lineageTag: cc954024-0495-43bb-a494-24f517e476ef
+		summarizeBy: none
+		sourceColumn: MonthName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		dataType: string
+		lineageTag: dcf5dd05-3813-4345-95c9-d7d75b14aa07
+		summarizeBy: none
+		sourceColumn: Quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Date = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\JOSEGONZ\OneDrive - Axpo Services AG\DnA Summit 2026\Copilot_Example\csv_examples\Dim_Date.csv"),[Delimiter=",", Columns=5, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Date", type date}, {"Year", Int64.Type}, {"Month", Int64.Type}, {"MonthName", type text}, {"Quarter", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,143 @@
+expression fxDates = ```
+		let
+		  Source = (StartDate as date, EndDate as date, optional AddYears as nullable number) as table =>
+		    let
+		
+		      //1) Normalize inputs
+		      addYearsSafe = if AddYears = null then 0 else AddYears,
+		      //2) Create a list of dates
+		      ActualEndDate = Date.AddYears(Date.From(EndDate), addYearsSafe),
+		      DateList = List.Dates(
+		          Date.From(StartDate),
+		          Number.From(Date.From(ActualEndDate)) - Number.From(Date.From(StartDate)) + 1,
+		          #duration(1, 0, 0, 0)
+		      ),
+		      //3) Build a table from the list
+		      BaseTable = Table.FromList(
+		        DateList,
+		        Splitter.SplitByNothing(),
+		        {"Dates"},
+		        null,
+		        ExtraValues.Error
+		      ),
+		      TypedDates = Table.TransformColumnTypes(BaseTable, {{"Dates", type date}}),
+		      //4) Add date reference columns
+		      YearColumn = Table.AddColumn(TypedDates, "Year", each Date.Year([Dates]), Int64.Type),
+		      MonthColumn = Table.AddColumn(YearColumn, "Month", each Date.Month([Dates]), Int64.Type),
+		      DayColumn = Table.AddColumn(MonthColumn, "Day", each Date.Day([Dates]), Int64.Type),
+		      QuarterColumn = Table.AddColumn(
+		        DayColumn,
+		        "Quarter",
+		        each Date.QuarterOfYear([Dates]),
+		        Int64.Type
+		      ),
+		      //5) Text columns
+		      QuarterTextColumn = Table.AddColumn(
+		        QuarterColumn,
+		        "QtrText",
+		        each "Qtr " & Number.ToText([Quarter]),
+		        type text
+		      ),
+		      // YearMonth: yyyymm
+		      YearMonthText = Table.AddColumn(
+		        QuarterTextColumn,
+		        "YearMonth",
+		        each Text.Combine({Date.ToText([Dates], "yyyy"), Date.ToText([Dates], "MM")}),
+		        type text
+		      ),
+		      // Year - MM
+		      YearMonth = Table.AddColumn(
+		        YearMonthText,
+		        "Year_Month",
+		        each Text.Combine({Date.ToText([Dates], "yyyy"), " - ", Date.ToText([Dates], "MM")}),
+		        type text
+		      ),
+		      // Quarter_Year: yy Q1..Q4 (e.g., 25 Q3)
+		      QuarterYear = Table.AddColumn(
+		        YearMonth,
+		        "Quarter_Year",
+		        each Text.Combine({Date.ToText([Dates], "yy"), " Q", Number.ToText([Quarter])}),
+		        type text
+		      ),
+		      // DateTime at 12:00:00 PM
+		      DateTimefromDate = Table.AddColumn(
+		        QuarterYear,
+		        "DateTime",
+		        each DateTime.FromText(Date.ToText([Dates], "yyyy-MM-dd") & " 12:00:00 PM"),
+		        type datetime
+		      ),
+		      // DayOfWeek: full name
+		      WeekDay = Table.AddColumn(
+		        DateTimefromDate,
+		        "DayOfWeek",
+		        each Date.DayOfWeekName([Dates]),
+		        type text
+		      ),
+		      // Week: "WW" where WW
+		      Week = Table.AddColumn(
+		        WeekDay,
+		        "Week",
+		        each 
+		          Date.WeekOfYear([Dates], Day.Monday),
+		        Int64.Type
+		      ),
+		      // Week_Year: "yyyy - WW" where WW
+		      Week_Year = Table.AddColumn(
+		        Week,
+		        "Week_Year",
+		        each Text.Combine(
+		          {Date.ToText([Dates], "yyyy"), " - ", Number.ToText(Date.WeekOfYear([Dates],Day.Monday))}
+		        ),
+		        type text
+		      ),
+		      // WeekOfYear: "yyyy - WW" where WW
+		      WeekofYear = Table.AddColumn(
+		        Week_Year,
+		        "WeekOfYear",
+		        each 
+		          Date.Year([Dates]) * 100 
+		          + Date.WeekOfYear([Dates], Day.Monday),
+		        Int64.Type
+		      ),
+		      // WeekIndex: sequential week number (no year gaps)
+		      WeekIndex = Table.AddColumn(
+		        WeekofYear,
+		        "WeekIndex",
+		        each 
+		          (Number.IntegerDivide([WeekOfYear], 100) * 53)
+		            + Number.Mod([WeekOfYear], 100),
+		        Int64.Type
+		      ),
+		      // WeekDayIndex: sequential weekday number (starting monday)
+		      WeekDayIndex = Table.AddColumn(
+		          WeekIndex,
+		          "WeekDayIndex",
+		          each Date.DayOfWeek([Dates], Day.Monday) + 1,
+		          Int64.Type
+		      )
+		        
+		    in
+		      WeekDayIndex
+		in
+		  Source
+		```
+	lineageTag: 3d15e9c3-35e8-4b48-8927-82e2c7cc8954
+	queryGroup: Parameters
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Function
+
+/// Format: mm-dd-yyyy
+/// 
+/// This template includes a pre-configured calendar table. The parameters below will determine the date range displayed in this table.
+/// 
+/// If your report does not require time-based analysis, you may enter any start and end year and disregard this table accordingly.
+expression FirstDate = #date(2023, 1, 1) meta [IsParameterQuery=true, Type="Date", IsParameterQueryRequired=true]
+	lineageTag: 29d84109-6428-45e2-bea9-8e8fb71e84d9
+	queryGroup: Parameters
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Date
+

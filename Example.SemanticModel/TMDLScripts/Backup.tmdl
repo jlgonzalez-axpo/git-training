@@ -1,0 +1,362 @@
+createOrReplace
+
+	model Model
+		culture: en-US
+		defaultPowerBIDataSourceVersion: powerBI_V3
+		sourceQueryCulture: en-US
+		dataAccessOptions
+			legacyRedirects
+			returnErrorValuesAsNull
+
+		table Calendar
+			lineageTag: cba20d53-7b5a-48c0-87c2-6fc8fb0c79f1
+
+			column Dates
+				dataType: dateTime
+				formatString: Long Date
+				lineageTag: 91e27971-f0fb-48a2-b3fa-f12153df2c5c
+				summarizeBy: none
+				sourceColumn: Dates
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column Year
+				dataType: int64
+				formatString: 0
+				lineageTag: 756323f7-6e26-4815-86ce-afb25a880d9b
+				summarizeBy: none
+				sourceColumn: Year
+
+				annotation SummarizationSetBy = User
+
+			column Month
+				dataType: int64
+				formatString: 0
+				lineageTag: eee997f7-4b16-465e-84e8-0ede6166aa53
+				summarizeBy: none
+				sourceColumn: Month
+
+				annotation SummarizationSetBy = User
+
+			column Quarter
+				dataType: int64
+				formatString: 0
+				lineageTag: b5e5dda0-e696-4fed-9b76-4ecb1e2d848a
+				summarizeBy: none
+				sourceColumn: Quarter
+
+				annotation SummarizationSetBy = User
+
+			column QtrText
+				dataType: string
+				lineageTag: 6faf963e-055d-413b-8d4a-2a658eccbb60
+				summarizeBy: none
+				sourceColumn: QtrText
+
+				annotation SummarizationSetBy = Automatic
+
+			column YearMonth
+				dataType: string
+				lineageTag: 1d62bf66-c51a-4ac8-bbcc-7ff2e2300347
+				summarizeBy: none
+				sourceColumn: YearMonth
+
+				annotation SummarizationSetBy = Automatic
+
+			column Year_Month
+				dataType: string
+				lineageTag: 2e41e9f6-647f-4bf6-9c44-366bbbceead2
+				summarizeBy: none
+				sourceColumn: Year_Month
+
+				annotation SummarizationSetBy = Automatic
+
+			column Quarter_Year
+				dataType: string
+				lineageTag: f9930037-d83c-4218-ae13-e99de5e1988f
+				summarizeBy: none
+				sourceColumn: Quarter_Year
+
+				annotation SummarizationSetBy = Automatic
+
+			column DateTime
+				dataType: dateTime
+				formatString: General Date
+				lineageTag: 967f4174-1a2f-405c-9c1c-48d77a629520
+				summarizeBy: none
+				sourceColumn: DateTime
+
+				annotation SummarizationSetBy = Automatic
+
+			column DayOfWeek
+				dataType: string
+				lineageTag: 527474bc-6037-4885-a4cf-2c3f8bf12fe6
+				summarizeBy: none
+				sourceColumn: DayOfWeek
+
+				annotation SummarizationSetBy = Automatic
+
+			column WeekOfYear
+				dataType: string
+				lineageTag: 4d6d0621-5006-4d50-b560-ba0361bb2dc7
+				summarizeBy: none
+				sourceColumn: WeekOfYear
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Calendar-0fd80722-00ec-4ce6-9710-0007f4da7dc1 = m
+				mode: import
+				queryGroup: 'Report Tables'
+				source =
+						let
+						    Source = fxDates(FirstDate, LastDate,2)
+						in
+						    Source
+
+			annotation PBI_NavigationStepName = Navigation
+
+			annotation PBI_ResultType = Table
+
+		table 'Data Refresh'
+			lineageTag: 0e8ee734-2a0b-494d-9dbf-7cc17e3fed79
+
+			column 'Date Time'
+				dataType: dateTime
+				formatString: dd-MMM-yy hh:mm AM/PM
+				lineageTag: a618f1a8-2a78-4df8-a622-b929dc3f722c
+				summarizeBy: none
+				sourceColumn: Date Time
+
+				annotation SummarizationSetBy = Automatic
+
+			column Date
+				dataType: dateTime
+				formatString: dd-MMM-yy
+				lineageTag: 22053be9-b751-4dad-8b0e-ce893ada6e4d
+				summarizeBy: none
+				sourceColumn: Date
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+			column Time
+				dataType: dateTime
+				formatString: hh:mm AM/PM
+				lineageTag: 4d937d9d-3e44-431c-ac7b-ffc0334222b3
+				summarizeBy: none
+				sourceColumn: Time
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Time
+
+			partition 'Data Refresh-054b709d-5b76-4411-b93d-5e2ba6dd99f2' = m
+				mode: import
+				queryGroup: 'Report Tables'
+				source =
+						let
+						// Get Now date time
+						  Actual_Date = DateTimeZone.SwitchZone(DateTimeZone.FixedUtcNow(), 2),
+						  //Transform the parameter to a table
+						  #"Converted to Table" = #table(1, {{Actual_Date}}),
+						  //Create new column to get tha date
+						  #"Duplicated Column" = Table.DuplicateColumn(#"Converted to Table", "Column1", "Column1 - Copy"),
+						  //Change data type to date
+						  #"Extracted Date" = Table.TransformColumns(
+						    #"Duplicated Column",
+						    {{"Column1 - Copy", DateTime.Date, type date}}
+						  ),
+						  //Duplicate the column to get the time
+						  #"Duplicated Column1" = Table.DuplicateColumn(#"Extracted Date", "Column1", "Column1 - Copy.1"),
+						  //Extract the time
+						  #"Extracted Time" = Table.TransformColumns(
+						    #"Duplicated Column1",
+						    {{"Column1 - Copy.1", DateTime.Time, type time}}
+						  ),
+						  //Rename all the columns
+						  #"Renamed Columns" = Table.RenameColumns(
+						    #"Extracted Time",
+						    {{"Column1 - Copy", "Date"}, {"Column1 - Copy.1", "Time"}, {"Column1", "Date Time"}}
+						  ),
+						  //Transform date types
+						  #"Changed Type" = Table.TransformColumnTypes(
+						    #"Renamed Columns",
+						    {{"Date Time", type datetimezone}}
+						  )
+						in
+						  #"Changed Type"
+
+			annotation PBI_NavigationStepName = Navigation
+
+			annotation PBI_ResultType = Table
+
+		table _Measures
+			lineageTag: 1b6cdce7-2f02-4b83-a66a-bce495853d0c
+
+			measure 'Data Refresh' =
+					VAR Date_Refresh =
+					    SUMMARIZE ( 'Data Refresh', 'Data Refresh'[Date Time] )
+					RETURN
+					    "Last Refresh: " & FORMAT(Date_Refresh, "dd-mmm-yyyy hh:mm:ss AM/PM")
+				lineageTag: 7a74251d-518b-4d6c-9ca3-d14b3c5fe9cb
+
+			partition _Measures-b494ef27-6e2d-4ad3-a787-daa2fa81002a = m
+				mode: import
+				queryGroup: 'Report Tables'
+				source =
+						let
+						    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+						    #"Removed Columns" = Table.RemoveColumns(Source,{"Column1"})
+						in
+						    #"Removed Columns"
+
+			annotation PBI_ResultType = Table
+
+			annotation PBI_NavigationStepName = Navigation
+
+		cultureInfo en-US
+
+			linguisticMetadata = {"Version":"1.0.0","Language":"en-US"}
+				contentType: json
+
+		expression fxDates =
+				let
+				  Source = (StartDate as date, EndDate as date, optional AddYears as nullable number) as table =>
+				    let
+				
+				      //1) Normalize inputs
+				      addYearsSafe = if AddYears = null then 0 else AddYears,
+				      //2) Create a list of dates
+				      DateList = List.Dates(
+				        StartDate,
+				        Number.From(EndDate) - Number.From(StartDate) + (addYearsSafe * 365),
+				        #duration(1, 0, 0, 0)
+				      ),
+				      //3) Build a table from the list
+				      BaseTable = Table.FromList(
+				        DateList,
+				        Splitter.SplitByNothing(),
+				        {"Dates"},
+				        null,
+				        ExtraValues.Error
+				      ),
+				      TypedDates = Table.TransformColumnTypes(BaseTable, {{"Dates", type date}}),
+				      //4) Add date reference columns
+				      YearColumn = Table.AddColumn(TypedDates, "Year", each Date.Year([Dates]), Int64.Type),
+				      MonthColumn = Table.AddColumn(YearColumn, "Month", each Date.Month([Dates]), Int64.Type),
+				      QuarterColumn = Table.AddColumn(
+				        MonthColumn,
+				        "Quarter",
+				        each Date.QuarterOfYear([Dates]),
+				        Int64.Type
+				      ),
+				      //5) Text columns
+				      QuarterTextColumn = Table.AddColumn(
+				        QuarterColumn,
+				        "QtrText",
+				        each "Qtr " & Number.ToText([Quarter]),
+				        type text
+				      ),
+				      // YearMonth: yyyymm
+				      YearMonthText = Table.AddColumn(
+				        QuarterTextColumn,
+				        "YearMonth",
+				        each Text.Combine({Date.ToText([Dates], "yyyy"), Date.ToText([Dates], "MM")}),
+				        type text
+				      ),
+				      // Year - MM
+				      YearMonth = Table.AddColumn(
+				        YearMonthText,
+				        "Year_Month",
+				        each Text.Combine({Date.ToText([Dates], "yyyy"), " - ", Date.ToText([Dates], "MM")}),
+				        type text
+				      ),
+				      // Quarter_Year: yy Q1..Q4 (e.g., 25 Q3)
+				      QuarterYear = Table.AddColumn(
+				        YearMonth,
+				        "Quarter_Year",
+				        each Text.Combine({Date.ToText([Dates], "yy"), " Q", Number.ToText([Quarter])}),
+				        type text
+				      ),
+				      // DateTime at 12:00:00 PM
+				      DateTimefromDate = Table.AddColumn(
+				        QuarterYear,
+				        "DateTime",
+				        each DateTime.FromText(Date.ToText([Dates], "yyyy-MM-dd") & " 12:00:00 PM"),
+				        type datetime
+				      ),
+				      // DayOfWeek: full name
+				      WeekDay = Table.AddColumn(
+				        DateTimefromDate,
+				        "DayOfWeek",
+				        each Date.DayOfWeekName([Dates]),
+				        type text
+				      ),
+				      // WeekOfYear: "yyyy - WW" where WW
+				      WeekofYear = Table.AddColumn(
+				        WeekDay,
+				        "WeekOfYear",
+				        each Text.Combine(
+				          {Date.ToText([Dates], "yyyy"), " - ", Number.ToText(Date.WeekOfYear([Dates]))}
+				        ),
+				        type text
+				      )
+				    in
+				      WeekofYear
+				in
+				  Source
+			lineageTag: 3d15e9c3-35e8-4b48-8927-82e2c7cc8954
+			queryGroup: Parameters
+
+			annotation PBI_NavigationStepName = Navigation
+
+			annotation PBI_ResultType = Function
+
+		expression FirstDate =
+				let
+				    //First date available
+				    Source = Date.AddYears(Date.StartOfYear(Date.From(DateTime.LocalNow())),-1)
+				in
+				    Source
+			lineageTag: 34f58bcd-c479-43e0-8603-09eed02b71cb
+			queryGroup: Parameters
+
+			annotation PBI_NavigationStepName = Navigation
+
+			annotation PBI_ResultType = Date
+
+		expression LastDate =
+				let
+				    Source = Date.AddYears(Date.EndOfYear(Date.From(DateTime.LocalNow())),1)
+				in
+				    Source
+			lineageTag: cd17e41d-0c44-413f-b07e-742deb437d65
+			queryGroup: Parameters
+
+			annotation PBI_NavigationStepName = Navigation
+
+			annotation PBI_ResultType = Date
+
+		queryGroup Parameters
+
+			annotation PBI_QueryGroupOrder = 0
+
+		queryGroup 'Report Tables'
+
+			annotation PBI_QueryGroupOrder = 1
+
+		annotation PBI_QueryOrder = ["fxDates","FirstDate","LastDate","_Measures","Calendar","Data Refresh"]
+
+		annotation __PBI_TimeIntelligenceEnabled = 0
+
+		annotation __TEdtr = 1
+
+		annotation BestPracticeAnalyzer_IgnoreRules = {"RuleIDs":["NO_CAMELCASE_COLUMNS_HIERARCHIES"]}
+
+		annotation BestPracticeAnalyzer_ExternalRuleFiles = ["https://raw.githubusercontent.com/TabularEditor/BestPracticeRules/master/BPARules-PowerBI.json"]
+
+		annotation PBI_ProTooling = ["TMDLView_Desktop"]
+

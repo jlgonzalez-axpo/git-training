@@ -1,0 +1,257 @@
+table Calendar
+	isHidden
+	lineageTag: cba20d53-7b5a-48c0-87c2-6fc8fb0c79f1
+
+	column Dates
+		dataType: dateTime
+		isHidden
+		formatString: Short Date
+		lineageTag: 91e27971-f0fb-48a2-b3fa-f12153df2c5c
+		summarizeBy: none
+		sourceColumn: Dates
+
+		variation Variation
+			isDefault
+			relationship: 66525189-f525-4423-a338-32ec2882a2ff
+			defaultHierarchy: LocalDateTable_178fa406-d07c-45cb-ab4a-810e34e2b4d8.'Date Hierarchy'
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 756323f7-6e26-4815-86ce-afb25a880d9b
+		summarizeBy: none
+		sourceColumn: Year
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column Month
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: eee997f7-4b16-465e-84e8-0ede6166aa53
+		summarizeBy: none
+		sourceColumn: Month
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column Quarter
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: b5e5dda0-e696-4fed-9b76-4ecb1e2d848a
+		summarizeBy: none
+		sourceColumn: Quarter
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column QtrText
+		dataType: string
+		isHidden
+		lineageTag: 6faf963e-055d-413b-8d4a-2a658eccbb60
+		summarizeBy: none
+		sourceColumn: QtrText
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearMonth
+		dataType: string
+		isHidden
+		lineageTag: 1d62bf66-c51a-4ac8-bbcc-7ff2e2300347
+		summarizeBy: none
+		sourceColumn: YearMonth
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year_Month
+		dataType: string
+		isHidden
+		lineageTag: 2e41e9f6-647f-4bf6-9c44-366bbbceead2
+		summarizeBy: none
+		sourceColumn: Year_Month
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter_Year
+		dataType: string
+		isHidden
+		lineageTag: f9930037-d83c-4218-ae13-e99de5e1988f
+		summarizeBy: none
+		sourceColumn: Quarter_Year
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column DateTime
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 967f4174-1a2f-405c-9c1c-48d77a629520
+		summarizeBy: none
+		sourceColumn: DateTime
+
+		variation Variation
+			isDefault
+			relationship: 49c4dbfb-d50e-41e9-ac81-a93ea3fb2260
+			defaultHierarchy: LocalDateTable_6b717e9f-c48f-4b9a-9707-e2f506b0a476.'Date Hierarchy'
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayOfWeek
+		dataType: string
+		isHidden
+		lineageTag: 527474bc-6037-4885-a4cf-2c3f8bf12fe6
+		summarizeBy: none
+		sourceColumn: DayOfWeek
+		sortByColumn: WeekDayIndex
+
+		changedProperty = SortByColumn
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column WeekOfYear
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 4d6d0621-5006-4d50-b560-ba0361bb2dc7
+		summarizeBy: sum
+		sourceColumn: WeekOfYear
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Week_Year
+		dataType: string
+		isHidden
+		lineageTag: 2e46da59-2ed2-4a74-99f3-478eec880367
+		summarizeBy: none
+		sourceColumn: Week_Year
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column WeekIndex
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 468c4c35-fbab-4756-8fbd-3cf8994f43b4
+		summarizeBy: sum
+		sourceColumn: WeekIndex
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Week
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 6b70dfe1-a6b6-4cf2-805f-17c8d4c62f9f
+		summarizeBy: sum
+		sourceColumn: Week
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Day
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 10dc021f-8e23-4894-b243-96caa22c96e1
+		summarizeBy: sum
+		sourceColumn: Day
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column WeekDayIndex
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 9169a616-2b86-4635-ac17-809a74d98403
+		summarizeBy: sum
+		sourceColumn: WeekDayIndex
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Week DayOfWeek Hierarchy'
+		isHidden
+		lineageTag: b059d690-0273-4e1b-9ab8-d747d44953d7
+
+		level Year
+			lineageTag: 85a38d59-78d6-41bc-af65-e4c541c369d1
+			column: Year
+
+		level Week
+			lineageTag: 3aaaacb7-d008-4539-ba2f-c1794da96bcf
+			column: Week
+
+		level DayOfWeek
+			lineageTag: dac40a9d-1bac-4d96-818b-d29727b427b8
+			column: DayOfWeek
+
+		changedProperty = IsHidden
+
+	hierarchy 'Month Day Hierarchy'
+		isHidden
+		lineageTag: 38e5fc1c-6828-4a9b-9516-3444eac3646f
+
+		level Year
+			lineageTag: 51540eec-67f4-46d4-a59b-ff499e693add
+			column: Year
+
+		level Month
+			lineageTag: 7d9f42d7-8a55-46e7-92f1-35f8d6e1e7be
+			column: Month
+
+		level Day
+			lineageTag: eaa2c8bb-ec1f-4e1a-a002-fa96292faaa3
+			column: Day
+
+		changedProperty = IsHidden
+
+	partition Calendar-0fd80722-00ec-4ce6-9710-0007f4da7dc1 = m
+		mode: import
+		queryGroup: 'Report Tables'
+		source =
+				let
+				    Source = fxDates(FirstDate, #date(Date.Year(DateTime.Date(DateTime.LocalNow())), 12, 31), 2),
+				    #"Sorted Rows" = Table.Sort(Source,{{"Dates", Order.Descending}})
+				in
+				    #"Sorted Rows"
+
+	changedProperty = IsHidden
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

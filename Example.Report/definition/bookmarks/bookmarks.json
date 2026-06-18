@@ -1,0 +1,13 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmarksMetadata/1.0.0/schema.json",
+  "items": [
+    {
+      "name": "cb387f450c246f345405",
+      "displayName": "Home",
+      "children": [
+        "ab71237f3848676cb7a2",
+        "eb3c8ac9171a059d4357"
+      ]
+    }
+  ]
+}

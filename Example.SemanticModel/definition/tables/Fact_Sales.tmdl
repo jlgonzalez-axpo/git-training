@@ -1,0 +1,121 @@
+table Fact_Sales
+	lineageTag: 1488d09f-efd0-4c1d-9ac9-69c562c47d5f
+
+	column TradeDate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c99fc174-b377-49ae-9bc2-fb7677cd88ec
+		summarizeBy: none
+		sourceColumn: TradeDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column DeliveryDate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 22949f55-941b-4a56-af50-6661e847fb7d
+		summarizeBy: none
+		sourceColumn: DeliveryDate
+
+		variation Variation
+			isDefault
+			relationship: 6343f576-e2bd-40b1-903e-f28d7ad4c3ab
+			defaultHierarchy: LocalDateTable_381b918a-1ab9-444f-96cc-6bfe26b86c60.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Product
+		dataType: string
+		lineageTag: f1d81b0c-5576-44ad-ba76-c1e3cd5baae2
+		summarizeBy: none
+		sourceColumn: Product
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: cd7af052-60cc-4f4b-8ac3-052a3342d382
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerID
+		dataType: int64
+		formatString: 0
+		lineageTag: 332cd453-04f0-46c8-a9be-32228e39cd1a
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column TraderID
+		dataType: int64
+		formatString: 0
+		lineageTag: 5dca7528-7403-48e4-b3c4-a7f1ad63dcd7
+		summarizeBy: none
+		sourceColumn: TraderID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Volume_MWh
+		dataType: int64
+		formatString: 0
+		lineageTag: f5a2ce86-217f-4c04-95b1-05b51122fea0
+		summarizeBy: sum
+		sourceColumn: Volume_MWh
+
+		annotation SummarizationSetBy = Automatic
+
+	column Price_EUR_MWh
+		dataType: int64
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		lineageTag: d31055c2-206b-45c1-bcb2-42a1b8e5f11b
+		summarizeBy: sum
+		sourceColumn: Price_EUR_MWh
+
+		annotation SummarizationSetBy = Automatic
+
+	column Revenue_EUR
+		dataType: int64
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		lineageTag: 8f986bdd-9b65-4649-ae80-9a6c562ceafd
+		summarizeBy: sum
+		sourceColumn: Revenue_EUR
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cost_EUR
+		dataType: int64
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		lineageTag: d1f18824-f2f4-42c6-a0d9-2b134b143a11
+		summarizeBy: sum
+		sourceColumn: Cost_EUR
+
+		annotation SummarizationSetBy = Automatic
+
+	column GrossMargin_EUR
+		dataType: int64
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		lineageTag: 3d0c745e-1fd5-4296-ba69-496bc2174749
+		summarizeBy: sum
+		sourceColumn: GrossMargin_EUR
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_Sales = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\JOSEGONZ\OneDrive - Axpo Services AG\DnA Summit 2026\Copilot_Example\csv_examples\Fact_Sales.csv"),[Delimiter=",", Columns=11, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"TradeDate", type date}, {"DeliveryDate", type date}, {"Product", type text}, {"Region", type text}, {"CustomerID", Int64.Type}, {"TraderID", Int64.Type}, {"Volume_MWh", Int64.Type}, {"Price_EUR_MWh", Int64.Type}, {"Revenue_EUR", Int64.Type}, {"Cost_EUR", Int64.Type}, {"GrossMargin_EUR", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

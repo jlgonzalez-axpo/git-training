@@ -1,0 +1,96 @@
+table 'Data Refresh'
+	isHidden
+	lineageTag: 0e8ee734-2a0b-494d-9dbf-7cc17e3fed79
+
+	column 'Date Time'
+		dataType: dateTime
+		isHidden
+		formatString: dd-MMM-yy hh:mm AM/PM
+		lineageTag: a618f1a8-2a78-4df8-a622-b929dc3f722c
+		summarizeBy: none
+		sourceColumn: Date Time
+
+		variation Variation
+			isDefault
+			relationship: b7d0b7ee-75a6-44bc-9fdc-5c13ef1923cc
+			defaultHierarchy: LocalDateTable_cb55b124-dffe-4d6c-b804-7e93c7cacf86.'Date Hierarchy'
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		isHidden
+		formatString: dd-MMM-yy
+		lineageTag: 22053be9-b751-4dad-8b0e-ce893ada6e4d
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: 5c90595c-b310-47bf-9d51-1a939c1085d7
+			defaultHierarchy: LocalDateTable_fb87afd0-6552-420a-ae0a-9dd52b520eff.'Date Hierarchy'
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Time
+		dataType: dateTime
+		isHidden
+		formatString: hh:mm AM/PM
+		lineageTag: 4d937d9d-3e44-431c-ac7b-ffc0334222b3
+		summarizeBy: none
+		sourceColumn: Time
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Time
+
+	partition 'Data Refresh-054b709d-5b76-4411-b93d-5e2ba6dd99f2' = m
+		mode: import
+		queryGroup: 'Report Tables'
+		source =
+				let
+				// Get Now date time
+				  Actual_Date = DateTimeZone.SwitchZone(DateTimeZone.FixedUtcNow(), 2),
+				  //Transform the parameter to a table
+				  #"Converted to Table" = #table(1, {{Actual_Date}}),
+				  //Create new column to get tha date
+				  #"Duplicated Column" = Table.DuplicateColumn(#"Converted to Table", "Column1", "Column1 - Copy"),
+				  //Change data type to date
+				  #"Extracted Date" = Table.TransformColumns(
+				    #"Duplicated Column",
+				    {{"Column1 - Copy", DateTime.Date, type date}}
+				  ),
+				  //Duplicate the column to get the time
+				  #"Duplicated Column1" = Table.DuplicateColumn(#"Extracted Date", "Column1", "Column1 - Copy.1"),
+				  //Extract the time
+				  #"Extracted Time" = Table.TransformColumns(
+				    #"Duplicated Column1",
+				    {{"Column1 - Copy.1", DateTime.Time, type time}}
+				  ),
+				  //Rename all the columns
+				  #"Renamed Columns" = Table.RenameColumns(
+				    #"Extracted Time",
+				    {{"Column1 - Copy", "Date"}, {"Column1 - Copy.1", "Time"}, {"Column1", "Date Time"}}
+				  ),
+				  //Transform date types
+				  #"Changed Type" = Table.TransformColumnTypes(
+				    #"Renamed Columns",
+				    {{"Date Time", type datetimezone}}
+				  )
+				in
+				  #"Changed Type"
+
+	changedProperty = IsHidden
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
