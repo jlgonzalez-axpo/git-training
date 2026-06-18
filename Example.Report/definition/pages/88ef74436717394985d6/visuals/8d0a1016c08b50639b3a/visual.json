@@ -131,11 +131,11 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Average price €/MWh"
+                  "Property": "Total revenue €"
                 }
               },
-              "queryRef": "_Measures.Average price €/MWh",
-              "nativeQueryRef": "Average price €/MWh"
+              "queryRef": "_Measures.Total revenue €",
+              "nativeQueryRef": "Total revenue €"
             }
           ]
         }
